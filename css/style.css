@@ -523,14 +523,14 @@ body.trava-scroll { overflow: hidden; }
   isolation: isolate;
 }
 
-/* A imagem do banner fica em images/banner.jpg.
+/* A imagem do banner fica em images/banner.png.
    Se o arquivo ainda não existir, a foto de baixo (frente.jpeg) aparece
    automaticamente como reserva — o site nunca fica sem banner. */
 .hero__midia {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-image: url("../images/banner.jpg"), url("../images/frente.jpeg");
+  background-image: url("../images/banner.png"), url("../images/frente.jpeg");
   background-size: cover, cover;
   background-position: center, center;
   background-repeat: no-repeat, no-repeat;
