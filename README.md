@@ -37,7 +37,7 @@ CfLimaTransportes/
 │   └── style.css         Todo o visual (tokens de cor no topo do arquivo)
 ├── js/
 │   └── main.js           Menu, animações, galeria, carrossel e formulário
-├── images/               Fotos da frota, logo e ícones
+├── images/               Fotos da frota, logo, ícones e a arte do banner
 ├── favicon.ico           Ícone da aba do navegador
 ├── site.webmanifest      Dados para instalar o site no celular
 ├── robots.txt            Instruções para os buscadores
@@ -111,6 +111,25 @@ Google, com o texto como o cliente escreveu. Para acrescentar outra, copie um bl
 > O site **não** declara nota média (`aggregateRating`) nos dados estruturados: o Google
 > não exibe estrelas na busca para avaliação que a própria empresa publica no site dela.
 > As estrelas aparecem pelo perfil do Google Meu Negócio.
+
+### Banner e foto do topo
+
+São duas coisas diferentes, e vale não trocar uma pela outra:
+
+- **A arte oficial** (`images/banner.jpg`) aparece **inteira**, na proporção original,
+  na seção `.faixa-marca` do `index.html` — logo depois dos números. Sem corte e sem
+  escurecimento, então o logo, os selos e o telefone ficam legíveis inclusive no celular.
+- **O fundo do topo** (hero) é uma **foto**: `images/frente.jpeg`, definida no CSS em
+  `.hero__midia`. Ali a imagem é cortada (`background-size: cover`) e recebe um véu
+  escuro por cima, porque o site escreve o próprio título em cima dela.
+
+⚠️ Não use uma arte com texto como fundo do hero. Numa tela de celular o corte deixa
+visível só a faixa central da imagem — cerca de 18% da largura — e todo o resto some.
+
+O arquivo `images/banner.png` (2,5 MB) é o original e fica guardado no repositório
+só como fonte para futuras edições; ele está no `.vercelignore` e não vai para o ar.
+Ao trocar a arte, gere um `.jpg` e atualize os atributos `width`/`height` do `<img>`
+no `index.html`.
 
 ### Mapa
 

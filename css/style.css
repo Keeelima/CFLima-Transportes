@@ -11,6 +11,7 @@
    05. Cabeçalho / navegação
    06. Hero (banner)
    07. Faixa deslizante (marquee)
+   07-B. Faixa da marca (arte oficial, sem corte)
    08. Números / contadores
    09. Cards de serviços
    10. Blocos divididos (sobre)
@@ -523,17 +524,18 @@ body.trava-scroll { overflow: hidden; }
   isolation: isolate;
 }
 
-/* A imagem do banner fica em images/banner.png.
-   Se o arquivo ainda não existir, a foto de baixo (frente.jpeg) aparece
-   automaticamente como reserva — o site nunca fica sem banner. */
+/* O fundo do hero é uma FOTO, não a arte do banner: aqui a imagem é cortada
+   (background-size: cover) e escurecida pelo véu, então precisa ser algo que
+   aguente perder as bordas. A arte pronta da CFlima aparece inteira na
+   faixa-marca, mais abaixo. Para trocar esta foto, use uma da pasta images/. */
 .hero__midia {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-image: url("../images/banner.png"), url("../images/frente.jpeg");
-  background-size: cover, cover;
-  background-position: center, center;
-  background-repeat: no-repeat, no-repeat;
+  background-image: url("../images/frente.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   transform: scale(1.06);
   animation: zoomLento 26s var(--ease) infinite alternate;
 }
@@ -681,6 +683,27 @@ body.trava-scroll { overflow: hidden; }
 @keyframes correr {
   from { transform: translateX(0); }
   to { transform: translateX(-100%); }
+}
+
+/* ==================== 07-B. FAIXA DA MARCA (ARTE OFICIAL) =============== */
+/* Aqui a arte pronta da CFlima aparece INTEIRA: sem corte, sem véu por cima
+   e na proporção original (1983x793). É por isso que ela não serve de fundo
+   para o hero — lá a imagem é cortada e escurecida. Ver seção 06. */
+.faixa-marca {
+  padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  background: var(--grad-escuro);
+}
+.faixa-marca__quadro {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--sombra);
+  line-height: 0;
+}
+.faixa-marca__img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* ========================= 08. NÚMEROS / CONTADORES ===================== */

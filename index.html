@@ -119,8 +119,9 @@
   <main id="conteudo">
 
     <!-- ============================== BANNER ============================ -->
-    <!-- ✏️ BANNER: salve a sua arte como images/banner.png (recomendado 1920x1080).
-         Enquanto o arquivo não existir, a foto frente.jpeg aparece no lugar. -->
+    <!-- ✏️ O fundo daqui é uma FOTO (images/frente.jpeg), definida no CSS em
+         .hero__midia. Ela é cortada e escurecida, então não use aqui uma arte
+         com texto — a arte oficial da CFlima está inteira na faixa-marca. -->
     <section class="hero">
       <div class="hero__midia" role="img" aria-label="Caminhão da CFlima Mudanças e Fretes pronto para o transporte"></div>
       <div class="hero__veu"></div>
@@ -216,6 +217,25 @@
             <div class="numero__valor" data-contador="98" data-sufixo="%">98%</div>
             <div class="numero__rotulo">Clientes que indicam</div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= FAIXA DA MARCA ========================= -->
+    <!-- A arte oficial da CFlima, inteira e sem corte. Se um dia trocar a arte,
+         atualize também os atributos width/height com o tamanho real da nova
+         imagem (evita que o layout "pule" enquanto ela carrega). -->
+    <section class="faixa-marca">
+      <div class="container">
+        <div class="faixa-marca__quadro reveal">
+          <img
+            class="faixa-marca__img"
+            src="images/banner.jpg"
+            width="1983"
+            height="793"
+            loading="lazy"
+            decoding="async"
+            alt="CF.Lima Transportes — sua mudança, nosso compromisso. Mudanças residenciais, mudanças comerciais e transporte de móveis, com cuidado com seus bens, pontualidade sempre e atendimento de confiança. Solicite seu orçamento pelo WhatsApp (12) 99776-6693.">
         </div>
       </div>
     </section>
