@@ -1,0 +1,22 @@
+# Vercel
+.vercel
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores / ferramentas locais
+.vscode/
+.idea/
+.claude/
+*.swp
+
+# Dependências (o site não usa nenhuma, mas fica a proteção)
+node_modules/
+
+# Ambiente / segredos — NUNCA suba arquivos assim para o repositório
+.env
+.env.*
+*.pem
+*.key

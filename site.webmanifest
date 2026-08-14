@@ -1,0 +1,25 @@
+{
+  "name": "CFlima Mudanças e Fretes",
+  "short_name": "CFlima",
+  "description": "Mudanças residenciais e comerciais, fretes e transporte de móveis no Vale do Paraíba.",
+  "lang": "pt-BR",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#04070d",
+  "theme_color": "#04070d",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "639x637",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

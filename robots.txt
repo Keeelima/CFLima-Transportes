@@ -1,0 +1,9 @@
+# robots.txt — CFlima Mudanças e Fretes
+# Libera o site inteiro para os buscadores.
+
+User-agent: *
+Allow: /
+Disallow: /404.html
+
+# ✏️ TROQUE "cflimatransportes.com.br" pelo endereço real do site
+Sitemap: https://cflimatransportes.com.br/sitemap.xml
