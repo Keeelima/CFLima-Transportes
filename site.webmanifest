@@ -1,9 +1,9 @@
 {
-  "name": "CFlima Mudanças e Fretes",
-  "short_name": "CFlima",
+  "name": "CF Lima Transportes",
+  "short_name": "CF Lima",
   "description": "Mudanças residenciais e comerciais, fretes e transporte de móveis no Vale do Paraíba.",
   "lang": "pt-BR",
-  "start_url": "/index.html",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
