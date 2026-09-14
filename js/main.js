@@ -3,17 +3,15 @@
    Sem bibliotecas externas. Compatível com Content-Security-Policy estrita
    (nenhum script inline, nenhum eval, nenhum innerHTML com dado do usuário).
    --------------------------------------------------------------------------
-   1.  Configuração editável
-   2.  Marca "js" no <html> (evita piscar do conteúdo)
-   3.  Cabeçalho fixo
-   4.  Menu mobile
-   5.  Animações de entrada
-   6.  Contadores + anos de empresa
-   7.  Galeria com lightbox
-   8.  Carrossel de avaliações
-   9.  Formulário -> WhatsApp (com validação e proteção anti-spam)
-   10. Botão voltar ao topo
-   11. Ano no rodapé
+   1. Configuração editável
+   2. Marca "js" no <html> e fila do Vercel Analytics
+   3. Cabeçalho
+   4. Menu mobile
+   5. Animações de entrada
+   6. Anos de empresa
+   7. Galeria com lightbox
+   8. Formulário -> WhatsApp (com validação e proteção anti-spam)
+   9. Ano no rodapé
    ========================================================================== */
 
 (function () {
@@ -27,14 +25,18 @@
     limiteTexto: 700              // tamanho máximo da mensagem enviada
   };
 
-  /* ============ 2. MARCA "js" NO <html> (evita piscar do conteúdo) ====== */
+  /* ====== 2. MARCA "js" (evita piscar do conteúdo) + VERCEL ANALYTICS ===== */
   document.documentElement.classList.add("js");
+
+  /* fila do Vercel Analytics — ficava num <script> inline, bloqueado pela CSP */
+  window.va = window.va || function () {
+    (window.vaq = window.vaq || []).push(arguments);
+  };
 
   var reduzirMovimento =
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* Atalhos utilitários */
   function $(sel, ctx) { return (ctx || document).querySelector(sel); }
   function $$(sel, ctx) {
     return Array.prototype.slice.call((ctx || document).querySelectorAll(sel));
@@ -42,50 +44,44 @@
 
   document.addEventListener("DOMContentLoaded", function () {
 
-    /* ======================= 3. CABEÇALHO FIXO ========================== */
+    /* ========================== 3. CABEÇALHO ============================ */
     var cabecalho = $(".cabecalho");
-    var btnTopo = $(".fab--topo");
+    var fab = $(".fab-wpp");
 
     function aoRolar() {
       var y = window.pageYOffset || document.documentElement.scrollTop;
-      if (cabecalho) cabecalho.classList.toggle("is-fixo", y > 24);
-      if (btnTopo) btnTopo.classList.toggle("is-visivel", y > 520);
+      if (cabecalho) cabecalho.classList.toggle("is-solido", y > 8);
+      if (fab) fab.classList.toggle("is-visivel", y > window.innerHeight * 0.6);
     }
 
-    var travado = false;
-    window.addEventListener(
-      "scroll",
-      function () {
-        if (travado) return;
-        travado = true;
-        window.requestAnimationFrame(function () {
-          aoRolar();
-          travado = false;
-        });
-      },
-      { passive: true }
-    );
+    var agendado = false;
+    window.addEventListener("scroll", function () {
+      if (agendado) return;
+      agendado = true;
+      window.requestAnimationFrame(function () {
+        aoRolar();
+        agendado = false;
+      });
+    }, { passive: true });
     aoRolar();
 
     /* ========================= 4. MENU MOBILE =========================== */
     var hamburguer = $(".hamburguer");
     var menu = $(".menu-mobile");
 
-    function fecharMenu() {
+    function definirMenu(abrir) {
       if (!menu || !hamburguer) return;
-      menu.classList.remove("is-aberto");
-      hamburguer.classList.remove("is-aberto");
-      hamburguer.setAttribute("aria-expanded", "false");
-      document.body.classList.remove("trava-scroll");
+      menu.classList.toggle("is-aberto", abrir);
+      hamburguer.setAttribute("aria-expanded", abrir ? "true" : "false");
+      hamburguer.setAttribute("aria-label", abrir ? "Fechar menu" : "Abrir menu");
+      if (cabecalho) cabecalho.classList.toggle("is-menu", abrir);
+      document.body.classList.toggle("trava-scroll", abrir);
     }
 
     if (hamburguer && menu) {
       hamburguer.addEventListener("click", function () {
         var abrir = !menu.classList.contains("is-aberto");
-        menu.classList.toggle("is-aberto", abrir);
-        hamburguer.classList.toggle("is-aberto", abrir);
-        hamburguer.setAttribute("aria-expanded", abrir ? "true" : "false");
-        document.body.classList.toggle("trava-scroll", abrir);
+        definirMenu(abrir);
         if (abrir) {
           var primeiro = $("a", menu);
           if (primeiro) primeiro.focus();
@@ -93,11 +89,20 @@
       });
 
       $$("a", menu).forEach(function (a) {
-        a.addEventListener("click", fecharMenu);
+        a.addEventListener("click", function () { definirMenu(false); });
       });
 
       document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") fecharMenu();
+        if (e.key === "Escape" && menu.classList.contains("is-aberto")) {
+          definirMenu(false);
+          hamburguer.focus();
+        }
+      });
+
+      window.addEventListener("resize", function () {
+        if (window.innerWidth >= 960 && menu.classList.contains("is-aberto")) {
+          definirMenu(false);
+        }
       });
     }
 
@@ -107,94 +112,27 @@
       if (!("IntersectionObserver" in window) || reduzirMovimento) {
         alvos.forEach(function (el) { el.classList.add("is-visivel"); });
       } else {
-        var obs = new IntersectionObserver(
-          function (entradas) {
-            entradas.forEach(function (ent) {
-              if (ent.isIntersecting) {
-                ent.target.classList.add("is-visivel");
-                obs.unobserve(ent.target);
-              }
-            });
-          },
-          { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
-        );
+        var obs = new IntersectionObserver(function (entradas) {
+          entradas.forEach(function (ent) {
+            if (ent.isIntersecting) {
+              ent.target.classList.add("is-visivel");
+              obs.unobserve(ent.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
         alvos.forEach(function (el) { obs.observe(el); });
       }
     }
 
-    /* ============== 6. CONTADORES + ANOS DE EMPRESA ===================== */
-    var anosDeEstrada = Math.max(
-      1,
-      new Date().getFullYear() - CONFIG.anoFundacao
-    );
+    /* ====================== 6. ANOS DE EMPRESA ========================== */
+    var anosDeEstrada = Math.max(1, new Date().getFullYear() - CONFIG.anoFundacao);
 
-    /* preenche automaticamente todo lugar que mostra os anos de empresa */
     $$("[data-anos]").forEach(function (el) {
-      if (el.hasAttribute("data-contador")) {
-        el.setAttribute("data-contador", String(anosDeEstrada));
-        el.textContent = "0";
-      } else {
-        el.textContent = String(anosDeEstrada);
-      }
+      el.textContent = String(anosDeEstrada);
     });
     $$("[data-ano-fundacao]").forEach(function (el) {
       el.textContent = String(CONFIG.anoFundacao);
     });
-
-    function animarContador(el) {
-      var alvo = parseFloat(el.getAttribute("data-contador")) || 0;
-      var sufixo = el.getAttribute("data-sufixo") || "";
-      var prefixo = el.getAttribute("data-prefixo") || "";
-      var decimais = parseInt(el.getAttribute("data-decimais"), 10) || 0;
-
-      /* formata no padrão brasileiro: 2.500 / 4,9 */
-      function formatar(n) {
-        try {
-          return n.toLocaleString("pt-BR", {
-            minimumFractionDigits: decimais,
-            maximumFractionDigits: decimais
-          });
-        } catch (err) {
-          return n.toFixed(decimais).replace(".", ",");
-        }
-      }
-
-      if (reduzirMovimento) {
-        el.textContent = prefixo + formatar(alvo) + sufixo;
-        return;
-      }
-      var duracao = 1500;
-      var inicio = null;
-
-      function passo(agora) {
-        if (inicio === null) inicio = agora;
-        var p = Math.min((agora - inicio) / duracao, 1);
-        var suave = 1 - Math.pow(1 - p, 3); // easeOutCubic
-        el.textContent = prefixo + formatar(alvo * suave) + sufixo;
-        if (p < 1) window.requestAnimationFrame(passo);
-      }
-      window.requestAnimationFrame(passo);
-    }
-
-    var contadores = $$("[data-contador]");
-    if (contadores.length) {
-      if (!("IntersectionObserver" in window)) {
-        contadores.forEach(animarContador);
-      } else {
-        var obsNum = new IntersectionObserver(
-          function (entradas) {
-            entradas.forEach(function (ent) {
-              if (ent.isIntersecting) {
-                animarContador(ent.target);
-                obsNum.unobserve(ent.target);
-              }
-            });
-          },
-          { threshold: 0.5 }
-        );
-        contadores.forEach(function (el) { obsNum.observe(el); });
-      }
-    }
 
     /* ==================== 7. GALERIA COM LIGHTBOX ======================= */
     var fotos = $$(".foto");
@@ -215,20 +153,15 @@
         var botao = fotos[atual];
         var img = $("img", botao);
         var src = botao.getAttribute("data-full") || (img ? img.getAttribute("src") : "");
-        var legenda =
-          botao.getAttribute("data-legenda") ||
-          (img ? img.getAttribute("alt") : "") ||
-          "";
+        var legenda = botao.getAttribute("data-legenda") || (img ? img.getAttribute("alt") : "") || "";
 
         if (lbImg) {
           lbImg.setAttribute("src", src);
-          lbImg.setAttribute("alt", legenda);
+          lbImg.setAttribute("alt", img ? img.getAttribute("alt") : legenda);
         }
         /* textContent (nunca innerHTML) — nada do conteúdo vira HTML */
         if (lbLegenda) lbLegenda.textContent = legenda;
-        if (lbContador) {
-          lbContador.textContent = atual + 1 + " / " + fotos.length;
-        }
+        if (lbContador) lbContador.textContent = atual + 1 + " / " + fotos.length;
       }
 
       function abrir(i) {
@@ -281,85 +214,7 @@
       });
     }
 
-    /* =================== 8. CARROSSEL DE AVALIAÇÕES ===================== */
-    var trilho = $(".avaliacoes__trilho");
-    if (trilho) {
-      var itens = $$(".depoimento", trilho);
-      var pontosBox = $(".carrossel__pontos");
-      var btnAnt = $(".carrossel__btn--ant");
-      var btnProx = $(".carrossel__btn--prox");
-      var pontos = [];
-
-      if (pontosBox && itens.length) {
-        itens.forEach(function (_, i) {
-          var b = document.createElement("button");
-          b.type = "button";
-          b.className = "ponto";
-          b.setAttribute("aria-label", "Ir para a avaliação " + (i + 1));
-          b.addEventListener("click", function () { irPara(i); });
-          pontosBox.appendChild(b);
-          pontos.push(b);
-        });
-      }
-
-      function larguraItem() {
-        if (!itens.length) return 1;
-        var estilo = window.getComputedStyle(trilho);
-        var gap = parseFloat(estilo.columnGap || estilo.gap) || 0;
-        return itens[0].getBoundingClientRect().width + gap;
-      }
-
-      function indiceAtual() {
-        return Math.round(trilho.scrollLeft / larguraItem());
-      }
-
-      function irPara(i) {
-        var max = itens.length - 1;
-        var alvo = Math.max(0, Math.min(i, max));
-        trilho.scrollTo({
-          left: alvo * larguraItem(),
-          behavior: reduzirMovimento ? "auto" : "smooth"
-        });
-      }
-
-      /* chegou ao fim da rolagem? (o último item pode não ficar no início) */
-      function noFim() {
-        return trilho.scrollLeft + trilho.clientWidth >= trilho.scrollWidth - 4;
-      }
-
-      function atualizarPontos() {
-        var i = noFim() ? itens.length - 1 : indiceAtual();
-        pontos.forEach(function (p, k) {
-          p.classList.toggle("is-ativo", k === i);
-        });
-      }
-
-      trilho.addEventListener("scroll", function () {
-        window.requestAnimationFrame(atualizarPontos);
-      }, { passive: true });
-
-      if (btnAnt) btnAnt.addEventListener("click", function () { irPara(indiceAtual() - 1); });
-      if (btnProx) btnProx.addEventListener("click", function () { irPara(indiceAtual() + 1); });
-
-      atualizarPontos();
-      window.addEventListener("resize", atualizarPontos);
-
-      /* passagem automática, pausada ao interagir */
-      if (!reduzirMovimento && itens.length > 1) {
-        var timer = window.setInterval(function () {
-          if (document.hidden) return;
-          irPara(noFim() ? 0 : indiceAtual() + 1);
-        }, 6500);
-
-        ["pointerenter", "focusin", "touchstart"].forEach(function (ev) {
-          trilho.addEventListener(ev, function () {
-            window.clearInterval(timer);
-          }, { passive: true });
-        });
-      }
-    }
-
-    /* ============ 9. FORMULÁRIO -> WHATSAPP (seguro, sem servidor) ======= */
+    /* ============ 8. FORMULÁRIO -> WHATSAPP (seguro, sem servidor) ======= */
     var form = $("#form-orcamento");
     if (form) {
       var status = $(".form__status", form);
@@ -369,7 +224,7 @@
          nada do que o visitante digita vira HTML em nenhum momento */
       function limpar(txt, max) {
         return String(txt || "")
-          .replace(/[\u0000-\u001F\u007F]/g, " ")
+          .replace(/[ -]/g, " ")
           .replace(/\s{2,}/g, " ")
           .trim()
           .slice(0, max || 120);
@@ -399,10 +254,7 @@
         var servico = limpar(form.servico ? form.servico.value : "", 60);
         var origem = limpar(form.origem ? form.origem.value : "", 90);
         var destino = limpar(form.destino ? form.destino.value : "", 90);
-        var mensagem = limpar(
-          form.mensagem ? form.mensagem.value : "",
-          CONFIG.limiteTexto
-        );
+        var mensagem = limpar(form.mensagem ? form.mensagem.value : "", CONFIG.limiteTexto);
 
         var digitos = telefone.replace(/\D/g, "");
 
@@ -428,33 +280,16 @@
         if (destino) linhas.push("Destino: " + destino);
         if (mensagem) linhas.push("", "Detalhes: " + mensagem);
 
-        var url =
-          "https://wa.me/" +
-          CONFIG.whatsapp +
-          "?text=" +
-          encodeURIComponent(linhas.join("\n"));
+        var url = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(linhas.join("\n"));
 
-        avisar(
-          "Tudo certo! Estamos abrindo o WhatsApp com o seu pedido de orçamento.",
-          true
-        );
+        avisar("Tudo certo! Estamos abrindo o WhatsApp com o seu pedido de orçamento.", true);
 
         var aba = window.open(url, "_blank", "noopener,noreferrer");
         if (!aba) window.location.href = url; /* caso o pop-up seja bloqueado */
       });
     }
 
-    /* ===================== 10. BOTÃO VOLTAR AO TOPO ===================== */
-    if (btnTopo) {
-      btnTopo.addEventListener("click", function () {
-        window.scrollTo({
-          top: 0,
-          behavior: reduzirMovimento ? "auto" : "smooth"
-        });
-      });
-    }
-
-    /* ======================== 11. ANO NO RODAPÉ ========================= */
+    /* ======================== 9. ANO NO RODAPÉ ========================== */
     $$("[data-ano-atual]").forEach(function (el) {
       el.textContent = String(new Date().getFullYear());
     });

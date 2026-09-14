@@ -14,7 +14,7 @@ exatamente os que vão para o ar.
 
 | Página | Arquivo | Conteúdo |
 |---|---|---|
-| Início | `index.html` | Banner, números da empresa, serviços, fotos, avaliações e FAQ |
+| Início | `index.html` | Apresentação, serviços, diferenciais, frota, avaliações, como funciona e FAQ |
 | Sobre | `sobre.html` | História da empresa, tempo de estrada e cidades atendidas |
 | Serviços | `servicos.html` | Os 6 serviços detalhados |
 | Galeria | `galeria.html` | Fotos com ampliação (lightbox navegável por teclado) |
@@ -36,8 +36,10 @@ CfLimaTransportes/
 ├── css/
 │   └── style.css         Todo o visual (tokens de cor no topo do arquivo)
 ├── js/
-│   └── main.js           Menu, animações, galeria, carrossel e formulário
-├── images/               Fotos da frota, logo, ícones e a arte do banner
+│   └── main.js           Menu, animações, galeria (lightbox) e formulário
+├── fonts/
+│   └── geist-latin.woff2 Fonte Geist (licença SIL OFL), servida pelo próprio site
+├── images/               Fotos da frota (originais + versões -800/-960), logo e ícones
 ├── favicon.ico           Ícone da aba do navegador
 ├── site.webmanifest      Dados para instalar o site no celular
 ├── robots.txt            Instruções para os buscadores
